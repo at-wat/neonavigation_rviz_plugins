@@ -38,6 +38,14 @@ else()
   )
 endif()
 
+find_file(HAVE_VALIDATE_QUATERNION_H
+  NAMES rviz/validate_quaternions.h
+  HINTS ${catkin_INCLUDE_DIRS}
+)
+if(HAVE_VALIDATE_QUATERNION_H)
+  add_definitions(-DHAVE_VALIDATE_QUATERNION_H)
+endif()
+
 add_definitions(-DQT_NO_KEYWORDS)
 
 add_library(${PROJECT_NAME}

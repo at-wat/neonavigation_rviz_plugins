@@ -53,7 +53,9 @@
 #include <trajectory_tracker_rviz_plugins/validate_floats.h>
 
 #include <rviz/validate_floats.h>
+#ifdef HAVE_VALIDATE_QUATERNION_H
 #include <rviz/validate_quaternions.h>
+#endif
 
 namespace trajectory_tracker_rviz_plugins
 {
@@ -442,6 +444,7 @@ void PathWithVelocityDisplay::processMessage(const trajectory_tracker_msgs::Path
     return;
   }
 
+#ifdef HAVE_VALIDATE_QUATERNION_H
   if (!trajectory_tracker_rviz_plugins::validateQuaternions(msg->poses))
   {
     ROS_WARN_ONCE_NAMED(
@@ -453,6 +456,7 @@ void PathWithVelocityDisplay::processMessage(const trajectory_tracker_msgs::Path
         "quaternions", "Path '%s' contains unnormalized quaternions.",
         qPrintable(getName()));
   }
+#endif
 
   // Lookup transform into fixed frame
   Ogre::Vector3 position;

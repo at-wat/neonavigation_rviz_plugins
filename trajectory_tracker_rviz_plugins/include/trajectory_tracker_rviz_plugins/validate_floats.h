@@ -34,7 +34,9 @@
 #include <vector>
 
 #include <rviz/validate_floats.h>
+#ifdef HAVE_VALIDATE_QUATERNION_H
 #include <rviz/validate_quaternions.h>
+#endif
 
 #include <trajectory_tracker_msgs/PathWithVelocity.h>
 #include <trajectory_tracker_msgs/PoseStampedWithVelocity.h>
@@ -91,6 +93,7 @@ inline bool validateFloats(const trajectory_tracker_msgs::PathWithVelocity& msg)
   return valid;
 }
 
+#ifdef HAVE_VALIDATE_QUATERNION_H
 inline bool validateQuaternions(const trajectory_tracker_msgs::PoseStampedWithVelocity& msg)
 {
   return rviz::validateQuaternions(msg.pose.orientation);
@@ -129,6 +132,7 @@ inline bool validateQuaternions(const boost::array<T, N>& arr)
 
   return true;
 }
+#endif
 
 }  // namespace trajectory_tracker_rviz_plugins
 

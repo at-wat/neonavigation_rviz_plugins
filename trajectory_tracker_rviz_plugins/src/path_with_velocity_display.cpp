@@ -163,7 +163,7 @@ void PathWithVelocityDisplay::reset()
   updateBufferLength();
 }
 
-void PathWithVelocityDisplay::allocateAxesVector(std::vector<rviz::Axes*>& axes_vect, int num)
+void PathWithVelocityDisplay::allocateAxesVector(std::vector<rviz::Axes*>& axes_vect, size_t num)
 {
   if (num > axes_vect.size())
   {
@@ -177,7 +177,7 @@ void PathWithVelocityDisplay::allocateAxesVector(std::vector<rviz::Axes*>& axes_
   }
   else if (num < axes_vect.size())
   {
-    for (int i = axes_vect.size() - 1; num <= i; i--)
+    for (int i = static_cast<int>(axes_vect.size()) - 1; static_cast<int>(num) <= i; i--)
     {
       delete axes_vect[i];
     }
@@ -185,7 +185,7 @@ void PathWithVelocityDisplay::allocateAxesVector(std::vector<rviz::Axes*>& axes_
   }
 }
 
-void PathWithVelocityDisplay::allocateArrowVector(std::vector<rviz::Arrow*>& arrow_vect, int num)
+void PathWithVelocityDisplay::allocateArrowVector(std::vector<rviz::Arrow*>& arrow_vect, size_t num)
 {
   if (num > arrow_vect.size())
   {
@@ -197,7 +197,7 @@ void PathWithVelocityDisplay::allocateArrowVector(std::vector<rviz::Arrow*>& arr
   }
   else if (num < arrow_vect.size())
   {
-    for (int i = arrow_vect.size() - 1; num <= i; i--)
+    for (int i = static_cast<int>(arrow_vect.size()) - 1; static_cast<int>(num) <= i; i--)
     {
       delete arrow_vect[i];
     }

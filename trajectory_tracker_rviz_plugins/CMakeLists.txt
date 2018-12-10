@@ -10,6 +10,7 @@ find_package(catkin REQUIRED
 catkin_package(
   CATKIN_DEPENDS
     pluginlib
+    rviz
     trajectory_tracker_msgs
 )
 

@@ -3,16 +3,17 @@ project(trajectory_tracker_rviz_plugins)
 
 find_package(catkin REQUIRED
   COMPONENTS
+    pluginlib
     rviz
     trajectory_tracker_msgs
 )
 catkin_package(
   CATKIN_DEPENDS
+    pluginlib
     trajectory_tracker_msgs
 )
 
 include_directories(${catkin_INCLUDE_DIRS} include)
-link_directories(${catkin_LIBRARY_DIRS})
 
 set(CMAKE_AUTOMOC ON)
 

@@ -48,7 +48,7 @@ inline bool validateFloats(const trajectory_tracker_msgs::PoseStampedWithVelocit
   bool valid = true;
   valid = valid && rviz::validateFloats(msg.pose.position);
   valid = valid && rviz::validateFloats(msg.pose.orientation);
-  valid = valid && rviz::validateFloats(msg.linear_velocity);
+  // NaN value in linear_velocity means "Don't Care"; don't validate linear_velocity field
   return valid;
 }
 

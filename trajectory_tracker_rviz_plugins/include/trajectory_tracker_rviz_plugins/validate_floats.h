@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2014, ATR, Atsushi Watanabe
- * Copyright (c) 2014-2018, the neonavigation authors
+ * Copyright (c) 2018, the neonavigation authors
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,52 +44,25 @@ namespace trajectory_tracker_rviz_plugins
 {
 inline bool validateFloats(const trajectory_tracker_msgs::PoseStampedWithVelocity& msg)
 {
-  bool valid = true;
-  valid = valid && rviz::validateFloats(msg.pose.position);
-  valid = valid && rviz::validateFloats(msg.pose.orientation);
+  return rviz::validateFloats(msg.pose.position) &&
+         rviz::validateFloats(msg.pose.orientation);
   // NaN value in linear_velocity means "Don't Care"; don't validate linear_velocity field
-  return valid;
 }
 
 template <typename T>
 inline bool validateFloats(const std::vector<T>& vec)
 {
-  typedef std::vector<T> VecType;
-  typename VecType::const_iterator it = vec.begin();
-  typename VecType::const_iterator end = vec.end();
-  for (; it != end; ++it)
+  for (const T& e : vec)
   {
-    if (!validateFloats(*it))
-    {
+    if (!validateFloats(e))
       return false;
-    }
   }
-
-  return true;
-}
-
-template <typename T, size_t N>
-inline bool validateFloats(const boost::array<T, N>& arr)
-{
-  typedef boost::array<T, N> ArrType;
-  typename ArrType::const_iterator it = arr.begin();
-  typename ArrType::const_iterator end = arr.end();
-  for (; it != end; ++it)
-  {
-    if (!validateFloats(*it))
-    {
-      return false;
-    }
-  }
-
   return true;
 }
 
 inline bool validateFloats(const trajectory_tracker_msgs::PathWithVelocity& msg)
 {
-  bool valid = true;
-  valid = valid && validateFloats(msg.poses);
-  return valid;
+  return validateFloats(msg.poses);
 }
 
 #ifdef HAVE_VALIDATE_QUATERNION_H
@@ -102,34 +74,11 @@ inline bool validateQuaternions(const trajectory_tracker_msgs::PoseStampedWithVe
 template <typename T>
 inline bool validateQuaternions(const std::vector<T>& vec)
 {
-  typedef std::vector<T> VecType;
-  typename VecType::const_iterator it = vec.begin();
-  typename VecType::const_iterator end = vec.end();
-  for (; it != end; ++it)
+  for (const T& e : vec)
   {
-    if (!validateQuaternions(*it))
-    {
+    if (!validateQuaternions(e))
       return false;
-    }
   }
-
-  return true;
-}
-
-template <typename T, size_t N>
-inline bool validateQuaternions(const boost::array<T, N>& arr)
-{
-  typedef boost::array<T, N> ArrType;
-  typename ArrType::const_iterator it = arr.begin();
-  typename ArrType::const_iterator end = arr.end();
-  for (; it != end; ++it)
-  {
-    if (!validateQuaternions(*it))
-    {
-      return false;
-    }
-  }
-
   return true;
 }
 #endif

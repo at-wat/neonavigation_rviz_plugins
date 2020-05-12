@@ -34,3 +34,37 @@ script:
     -e TRAVIS_BUILD_NUMBER
     -e TRAVIS_BUILD_WEB_URL
     neonavigation-rviz-plugins /catkin_ws/src/${PACKAGE_NAME}/.travis/test.sh
+
+jobs:
+  include:
+    - stage: test
+      env:
+        - ROS_DISTRO_TARGET=noetic
+      script:
+        - BUILD_LINK="[[#${TRAVIS_BUILD_NUMBER}](${TRAVIS_BUILD_WEB_URL})]"
+        - |
+          docker run -it --rm \
+            -v $(pwd):/src:ro \
+            alpineros/ros-abuild:3.11-noetic \
+            && gh-pr-comment "${BUILD_LINK} PASSED on ${ROS_DISTRO_TARGET}" \
+              "Tested on Alpine ROS" \
+            || (gh-pr-comment "${BUILD_LINK} FAILED on ${ROS_DISTRO_TARGET}" \
+              "Tested on Alpine ROS"; false) \
+    - stage: prerelease-test
+      if: head_branch =~ ^release-.*$
+      env:
+        - ROS_DISTRO_TARGET=kinetic COVERAGE_TEST=false
+      before_install: pip install --user gh-pr-comment
+      script: .travis/prerelease_test.sh
+    - stage: prerelease-test
+      if: head_branch =~ ^release-.*$
+      env:
+        - ROS_DISTRO_TARGET=melodic COVERAGE_TEST=false
+      before_install: pip install --user gh-pr-comment
+      script: .travis/prerelease_test.sh
+    - stage: prerelease-test
+      if: head_branch =~ ^release-.*$
+      env:
+        - ROS_DISTRO_TARGET=noetic COVERAGE_TEST=false
+      before_install: pip install --user gh-pr-comment
+      script: .travis/prerelease_test.sh

@@ -26,6 +26,7 @@ RUN apt-get -qq update \
     curl \
     libxml2-utils \
     python-pip \
+    python-rosdep \
     sudo \
     wget \
   && apt-get clean \

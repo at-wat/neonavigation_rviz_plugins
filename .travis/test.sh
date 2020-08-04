@@ -7,14 +7,16 @@ cd /catkin_ws
 
 build_number="[[#${TRAVIS_BUILD_NUMBER}](${TRAVIS_BUILD_WEB_URL})]"
 
+md_codeblock='```'
+
 pkgs=$(find . -name package.xml | xargs -n1 dirname)
 catkin_lint $pkgs \
   || (gh-pr-comment "${build_number} FAILED on ${ROS_DISTRO}" \
       "<details><summary>catkin_lint failed</summary>
 
-\`\`\`
+${md_codeblock}
 $(catkin_lint $pkgs 2>&1)
-\`\`\`
+${md_codeblock}
 </details>"; false)
 
 sed -i -e '5a set(CMAKE_C_FLAGS "-Wall -Werror -O2")' \
@@ -34,15 +36,15 @@ catkin_make run_tests ${CM_OPTIONS} \
 if [ catkin_test_results ];
 then
   result_text="
-\`\`\`
+${md_codeblock}
 $(catkin_test_results --all | grep -v Skipping || true)
-\`\`\`
+${md_codeblock}
 "
 else
   result_text="
-\`\`\`
+${md_codeblock}
 $(catkin_test_results --all | grep -v Skipping || true)
-\`\`\`
+${md_codeblock}
 $(find build/test_results/ -name *.xml | xargs -n 1 -- bash -c 'echo; echo \#\#\# $0; echo; echo \\\`\\\`\\\`; xmllint --format $0; echo \\\`\\\`\\\`;')
 "
 fi

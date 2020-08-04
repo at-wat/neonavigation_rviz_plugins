@@ -16,6 +16,10 @@ RUN mkdir -p /repos-manifests/src \
 # ========================================
 FROM ros:${ROS_DISTRO}-ros-core
 
+RUN sed -e \
+  's|http://archive\.ubuntu\.com|http://us-east-1.ec2.archive.ubuntu.com|' \
+  -i /etc/apt/sources.list
+
 RUN apt-get -qq update \
   && apt-get upgrade -y \
   && apt-get install -y --no-install-recommends \
@@ -26,9 +30,10 @@ RUN apt-get -qq update \
     wget \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
-RUN pip install gh-pr-comment catkin_lint
+RUN pip install catkin_lint
 
-RUN rosdep update \
+RUN rosdep init \
+  && rosdep update \
   && mkdir -p /catkin_ws/src \
   && cd /catkin_ws/src \
   && . /opt/ros/${ROS_DISTRO}/setup.sh \
@@ -42,3 +47,4 @@ RUN apt-get -qq update \
   && rm -rf /var/lib/apt/lists/*
 
 COPY --from=cloner /repos/src /catkin_ws/src
+COPY .travis/gh-pr-comment /usr/local/bin/

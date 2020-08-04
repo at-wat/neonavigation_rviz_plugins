@@ -1,10 +1,6 @@
 dist: bionic
 services: docker
 language: bash
-addons:
-  apt:
-    packages:
-      - python-pip
 
 env:
   global:
@@ -17,11 +13,9 @@ branches:
     - master
 
 before_install:
-  - pip install --user gh-pr-comment
-
-install: true
-
+  - curl -sL https://raw.githubusercontent.com/at-wat/gh-pr-comment/master/install.sh | sh -s
 script:
+  - cp ~/.local/bin/gh-pr-comment .travis/
   - docker build
     -t neonavigation-rviz-plugins
     -f .travis/Dockerfile
@@ -56,17 +50,17 @@ jobs:
       if: head_branch =~ ^release-.*$
       env:
         - ROS_DISTRO_TARGET=kinetic COVERAGE_TEST=false
-      before_install: pip install --user gh-pr-comment
+      before_install: curl -sL https://raw.githubusercontent.com/at-wat/gh-pr-comment/master/install.sh | sh -s
       script: .travis/prerelease_test.sh
     - stage: prerelease-test
       if: head_branch =~ ^release-.*$
       env:
         - ROS_DISTRO_TARGET=melodic COVERAGE_TEST=false
-      before_install: pip install --user gh-pr-comment
+      before_install: curl -sL https://raw.githubusercontent.com/at-wat/gh-pr-comment/master/install.sh | sh -s
       script: .travis/prerelease_test.sh
     - stage: prerelease-test
       if: head_branch =~ ^release-.*$
       env:
         - ROS_DISTRO_TARGET=noetic COVERAGE_TEST=false
-      before_install: pip install --user gh-pr-comment
+      before_install: curl -sL https://raw.githubusercontent.com/at-wat/gh-pr-comment/master/install.sh | sh -s
       script: .travis/prerelease_test.sh

@@ -601,7 +601,7 @@ void CSpace3DDisplay::createSwatches()
 
   for (int i = 0; i < 4; i++)
   {
-    ROS_INFO("Creating %d swatches costmap_3d", n_swatches);
+    ROS_INFO("Creating %d swatches", n_swatches);
     for (unsigned i = 0; i < swatches.size(); i++)
     {
       delete swatches[i];
@@ -635,12 +635,6 @@ void CSpace3DDisplay::createSwatches()
         }
       }
       updateAlpha();
-      if (n_swatches <= 2)
-      {
-        ROS_ERROR("HOGGE");
-        throw Ogre::RenderingAPIException(0, "aa", "aa", "aa", 0);
-      }
-
       return;
     }
     catch (Ogre::RenderingAPIException&)

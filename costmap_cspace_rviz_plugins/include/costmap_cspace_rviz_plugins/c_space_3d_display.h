@@ -30,8 +30,11 @@
 
 // This file is based on https://bit.ly/3yV4zC2
 
-#ifndef RVIZ_MAP_DISPLAY_H
-#define RVIZ_MAP_DISPLAY_H
+#ifndef COSTMAP_CSPACE_RVIZ_PLUGINS_C_SPACE_3D_DISPLAY_H
+#define COSTMAP_CSPACE_RVIZ_PLUGINS_C_SPACE_3D_DISPLAY_H
+
+#include <vector>
+#include <string>
 
 #ifndef Q_MOC_RUN
 #include <boost/thread/thread.hpp>
@@ -39,7 +42,6 @@
 #include <OGRE/OgreTexture.h>
 #include <OGRE/OgreMaterial.h>
 #include <OGRE/OgreVector3.h>
-#include <OGRE/OgreSharedPtr.h>
 #include <OGRE/OgreManualObject.h>
 #include <OGRE/OgreMaterialManager.h>
 #include <OGRE/OgreSceneManager.h>
@@ -49,12 +51,10 @@
 #include <OGRE/OgreSharedPtr.h>
 #endif
 
-#include <nav_msgs/MapMetaData.h>
-#include <ros/time.h>
-
 #include <costmap_cspace_msgs/CSpace3D.h>
 #include <costmap_cspace_msgs/CSpace3DUpdate.h>
-
+#include <nav_msgs/MapMetaData.h>
+#include <ros/time.h>
 #include <rviz/display.h>
 
 namespace Ogre
@@ -84,14 +84,11 @@ class Swatch
   friend class CSpace3DDisplay;
 
 public:
-  Swatch(CSpace3DDisplay* parent,
-         unsigned int x,
-         unsigned int y,
-         unsigned int width,
-         unsigned int height,
+  Swatch(CSpace3DDisplay* parent, unsigned int x, unsigned int y, unsigned int width, unsigned int height,
          float resolution);
   ~Swatch();
-  void updateAlpha(const Ogre::SceneBlendType sceneBlending, bool depthWrite, costmap_cspace_rviz_plugins::AlphaSetter* alpha_setter);
+  void updateAlpha(const Ogre::SceneBlendType sceneBlending, bool depthWrite,
+                   costmap_cspace_rviz_plugins::AlphaSetter* alpha_setter);
   void updateData(const int yaw);
 
 protected:
@@ -202,4 +199,4 @@ protected:
 
 }  // namespace costmap_cspace_rviz_plugins
 
-#endif
+#endif  // COSTMAP_CSPACE_RVIZ_PLUGINS_C_SPACE_3D_DISPLAY_H

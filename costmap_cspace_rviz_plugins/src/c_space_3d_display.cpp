@@ -31,6 +31,7 @@
 // This file is based on https://bit.ly/3RNiYJt
 
 #include <boost/bind.hpp>
+#include <algorithm>
 
 #include <OGRE/OgreManualObject.h>
 #include <OGRE/OgreMaterialManager.h>
@@ -42,6 +43,7 @@
 
 #include <ros/ros.h>
 
+#include <costmap_cspace_rviz_plugins/c_space_3d_display.h>
 #include <rviz/frame_manager.h>
 #include <rviz/ogre_helpers/custom_parameter_indices.h>
 #include <rviz/ogre_helpers/grid.h>
@@ -56,23 +58,18 @@
 #include <rviz/validate_quaternions.h>
 #include <rviz/display_context.h>
 
-#include <costmap_cspace_rviz_plugins/c_space_3d_display.h>
-
 namespace costmap_cspace_rviz_plugins
 {
 // helper class to set alpha parameter on all renderables.
 class AlphaSetter : public Ogre::Renderable::Visitor
 {
 public:
-  AlphaSetter(float alpha)
+  explicit AlphaSetter(float alpha)
     : alpha_vec_(alpha, alpha, alpha, alpha)
   {
   }
 
-  void visit(Ogre::Renderable* rend,
-             ushort /*lodIndex*/,
-             bool /*isDebug*/,
-             Ogre::Any* /*pAny*/ = nullptr) override
+  void visit(Ogre::Renderable* rend, ushort /*lodIndex*/, bool /*isDebug*/, Ogre::Any* /*pAny*/ = nullptr) override
   {
     rend->setCustomParameter(ALPHA_PARAMETER, alpha_vec_);
   }
@@ -81,11 +78,7 @@ private:
   Ogre::Vector4 alpha_vec_;
 };
 
-Swatch::Swatch(CSpace3DDisplay* parent,
-               unsigned int x,
-               unsigned int y,
-               unsigned int width,
-               unsigned int height,
+Swatch::Swatch(CSpace3DDisplay* parent, unsigned int x, unsigned int y, unsigned int width, unsigned int height,
                float resolution)
   : parent_(parent)
   , manual_object_(nullptr)
@@ -176,8 +169,7 @@ Swatch::~Swatch()
   parent_->scene_manager_->destroyManualObject(manual_object_);
 }
 
-void Swatch::updateAlpha(const Ogre::SceneBlendType sceneBlending,
-                         bool depthWrite,
+void Swatch::updateAlpha(const Ogre::SceneBlendType sceneBlending, bool depthWrite,
                          costmap_cspace_rviz_plugins::AlphaSetter* alpha_setter)
 {
   material_->setSceneBlending(sceneBlending);
@@ -200,7 +192,7 @@ void Swatch::updateData(const int yaw)
   for (unsigned int yy = y_; yy < y_ + height_; yy++)
   {
     int index = yy * fw + x_;
-    int pixels_to_copy = std::min((int)width_, N - index);
+    int pixels_to_copy = std::min(static_cast<int>(width_), N - index);
     memcpy(ptr, &parent_->current_map_.data[shift_map + index], pixels_to_copy);
     ptr += pixels_to_copy;
     if (index + pixels_to_copy >= N)
@@ -240,8 +232,8 @@ void Swatch::updateData(const int yaw)
   std::stringstream ss;
   ss << "CSpace3DMapTexture" << tex_count++;
   texture_ = Ogre::TextureManager::getSingleton().loadRawData(
-      ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, pixel_stream, width_, height_,
-      Ogre::PF_L8, Ogre::TEX_TYPE_2D, 0);
+      ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, pixel_stream, width_, height_, Ogre::PF_L8,
+      Ogre::TEX_TYPE_2D, 0);
 
   delete[] pixels;
 }
@@ -262,13 +254,13 @@ CSpace3DDisplay::CSpace3DDisplay()
       "Update Topic", "", QString::fromStdString(ros::message_traits::datatype<costmap_cspace_msgs::CSpace3DUpdate>()),
       "costmap_cspace_msgs::CSpace3D topic to subscribe to.", this, SLOT(updateTopic()));
 
-  alpha_property_ = new rviz::FloatProperty("Alpha", 0.7, "Amount of transparency to apply to the map.", this,
-                                            SLOT(updateAlpha()));
+  alpha_property_ =
+      new rviz::FloatProperty("Alpha", 0.7, "Amount of transparency to apply to the map.", this, SLOT(updateAlpha()));
   alpha_property_->setMin(0);
   alpha_property_->setMax(1);
 
-  color_scheme_property_ = new rviz::EnumProperty("Color Scheme", "costmap", "How to color the occupancy values.",
-                                                  this, SLOT(updatePalette()));
+  color_scheme_property_ = new rviz::EnumProperty("Color Scheme", "costmap", "How to color the occupancy values.", this,
+                                                  SLOT(updatePalette()));
   // Option values here must correspond to indices in palette_textures_ array in onInitialize() below.
   color_scheme_property_->addOption("costmap", 0);
   color_scheme_property_->addOption("raw", 1);
@@ -276,13 +268,12 @@ CSpace3DDisplay::CSpace3DDisplay()
   yaw_property_ = new rviz::IntProperty("Yaw", 0, "Yaw number of drawn map.", this, SLOT(updateYaw()));
   yaw_property_->setMin(0);
 
-  draw_under_property_ = new Property(
-      "Draw Behind", false,
-      "Rendering option, controls whether or not the map is always drawn behind everything else.", this,
-      SLOT(updateDrawUnder()));
+  draw_under_property_ = new Property("Draw Behind", false,
+                                      "Rendering option, controls whether or not the map is always drawn behind "
+                                      "everything else.",
+                                      this, SLOT(updateDrawUnder()));
 
-  resolution_property_ =
-      new rviz::FloatProperty("Resolution", 0, "Resolution of the map. (not editable)", this);
+  resolution_property_ = new rviz::FloatProperty("Resolution", 0, "Resolution of the map. (not editable)", this);
   resolution_property_->setReadOnly(true);
 
   angular_resolution_property_ =
@@ -297,19 +288,17 @@ CSpace3DDisplay::CSpace3DDisplay()
 
   position_property_ =
       new rviz::VectorProperty("Position", Ogre::Vector3::ZERO,
-                               "Position of the bottom left corner of the map, in meters. (not editable)",
-                               this);
+                               "Position of the bottom left corner of the map, in meters. (not editable)", this);
   position_property_->setReadOnly(true);
 
   orientation_property_ = new rviz::QuaternionProperty("Orientation", Ogre::Quaternion::IDENTITY,
                                                        "Orientation of the map. (not editable)", this);
   orientation_property_->setReadOnly(true);
 
-  unreliable_property_ =
-      new BoolProperty("Unreliable", false, "Prefer UDP topic transport", this, SLOT(updateTopic()));
+  unreliable_property_ = new BoolProperty("Unreliable", false, "Prefer UDP topic transport", this, SLOT(updateTopic()));
 
-  transform_timestamp_property_ = new BoolProperty(
-      "Use Timestamp", false, "Use map header timestamp when transforming", this, SLOT(transformMap()));
+  transform_timestamp_property_ = new BoolProperty("Use Timestamp", false, "Use map header timestamp when transforming",
+                                                   this, SLOT(transformMap()));
 }
 
 CSpace3DDisplay::~CSpace3DDisplay()
@@ -398,8 +387,8 @@ Ogre::TexturePtr makePaletteTexture(unsigned char* palette_bytes)
   std::stringstream ss;
   ss << "CSpace3DMapPaletteTexture" << palette_tex_count++;
   return Ogre::TextureManager::getSingleton().loadRawData(
-      ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, palette_stream, 256, 1,
-      Ogre::PF_BYTE_RGBA, Ogre::TEX_TYPE_1D, 0);
+      ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, palette_stream, 256, 1, Ogre::PF_BYTE_RGBA,
+      Ogre::TEX_TYPE_1D, 0);
 }
 
 void CSpace3DDisplay::onInitialize()
@@ -438,13 +427,13 @@ void CSpace3DDisplay::subscribe()
     {
       if (unreliable_property_->getBool())
       {
-        map_sub_ = update_nh_.subscribe(topic_property_->getTopicStd(), 1, &CSpace3DDisplay::incomingMap,
-                                        this, ros::TransportHints().unreliable());
+        map_sub_ = update_nh_.subscribe(topic_property_->getTopicStd(), 1, &CSpace3DDisplay::incomingMap, this,
+                                        ros::TransportHints().unreliable());
       }
       else
       {
-        map_sub_ = update_nh_.subscribe(topic_property_->getTopicStd(), 1, &CSpace3DDisplay::incomingMap,
-                                        this, ros::TransportHints().reliable());
+        map_sub_ = update_nh_.subscribe(topic_property_->getTopicStd(), 1, &CSpace3DDisplay::incomingMap, this,
+                                        ros::TransportHints().reliable());
       }
       setStatus(rviz::StatusProperty::Ok, "Topic", "OK");
     }
@@ -457,8 +446,8 @@ void CSpace3DDisplay::subscribe()
     {
       try
       {
-        update_sub_ = update_nh_.subscribe(topic_update_property_->getTopicStd(), 1,
-                                           &CSpace3DDisplay::incomingUpdate, this);
+        update_sub_ =
+            update_nh_.subscribe(topic_update_property_->getTopicStd(), 1, &CSpace3DDisplay::incomingUpdate, this);
         setStatus(rviz::StatusProperty::Ok, "Update Topic", "OK");
       }
       catch (ros::Exception& e)
@@ -676,8 +665,7 @@ void CSpace3DDisplay::showMap()
 
   if (!validateFloats(current_map_))
   {
-    setStatus(rviz::StatusProperty::Error, "Map",
-              "Message contained invalid floating point values (nans or infs)");
+    setStatus(rviz::StatusProperty::Error, "Map", "Message contained invalid floating point values (nans or infs)");
     return;
   }
 
@@ -821,11 +809,10 @@ void CSpace3DDisplay::transformMap()
   Ogre::Quaternion orientation;
   if (!context_->getFrameManager()->transform(frame_, transform_time, current_map_.info.origin, position,
                                               orientation) &&
-      !context_->getFrameManager()->transform(frame_, ros::Time(0), current_map_.info.origin, position,
-                                              orientation))
+      !context_->getFrameManager()->transform(frame_, ros::Time(0), current_map_.info.origin, position, orientation))
   {
-    ROS_DEBUG("Error transforming map '%s' from frame '%s' to frame '%s'", qPrintable(getName()),
-              frame_.c_str(), qPrintable(fixed_frame_));
+    ROS_DEBUG("Error transforming map '%s' from frame '%s' to frame '%s'", qPrintable(getName()), frame_.c_str(),
+              qPrintable(fixed_frame_));
 
     setStatus(rviz::StatusProperty::Error, "Transform",
               "No transform from [" + QString::fromStdString(frame_) + "] to [" + fixed_frame_ + "]");

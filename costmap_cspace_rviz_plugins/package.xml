@@ -22,6 +22,6 @@
   <test_depend>roslint</test_depend>
 
   <export>
-      <rviz plugin="${prefix}/plugin_description.xml"/>
+    <rviz plugin="${prefix}/plugin_description.xml"/>
   </export>
 </package>

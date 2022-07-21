@@ -16,7 +16,8 @@ add_compile_options(-Wall)
 
 include_directories(
   include
-  ${catkin_INCLUDE_DIRS})
+  ${catkin_INCLUDE_DIRS}
+)
 link_directories(${catkin_LIBRARY_DIRS})
 
 set(CMAKE_AUTOMOC ON)

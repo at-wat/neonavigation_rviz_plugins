@@ -163,7 +163,7 @@ protected:
   void clear();
   void createSwatches();
 
-  std::vector<Swatch*> swatches;
+  std::vector<Swatch*> swatches_;
   std::vector<Ogre::TexturePtr> palette_textures_;
   std::vector<bool> color_scheme_transparency_;
   bool loaded_;

@@ -305,11 +305,11 @@ CSpace3DDisplay::~CSpace3DDisplay()
 {
   unsubscribe();
   clear();
-  for (unsigned i = 0; i < swatches.size(); i++)
+  for (unsigned i = 0; i < swatches_.size(); i++)
   {
-    delete swatches[i];
+    delete swatches_[i];
   }
-  swatches.clear();
+  swatches_.clear();
 }
 
 unsigned char* makeCostmapPalette()
@@ -327,7 +327,7 @@ unsigned char* makeCostmapPalette()
   for (int i = 1; i <= 99; i++)
   {
     unsigned char v = (255 * i) / 100;
-    *palette_ptr++ = v;        // red
+    *palette_ptr++ = v;        // redcre
     *palette_ptr++ = 0;        // green
     *palette_ptr++ = 255 - v;  // blue
     *palette_ptr++ = 255;      // alpha
@@ -487,9 +487,9 @@ void CSpace3DDisplay::updateAlpha()
 
   AlphaSetter alpha_setter(alpha);
 
-  for (unsigned i = 0; i < swatches.size(); i++)
+  for (unsigned i = 0; i < swatches_.size(); i++)
   {
-    swatches[i]->updateAlpha(sceneBlending, depthWrite, &alpha_setter);
+    swatches_[i]->updateAlpha(sceneBlending, depthWrite, &alpha_setter);
   }
 }
 
@@ -499,24 +499,24 @@ void CSpace3DDisplay::updateDrawUnder()
 
   if (alpha_property_->getFloat() >= 0.9998)
   {
-    for (unsigned i = 0; i < swatches.size(); i++)
-      swatches[i]->material_->setDepthWriteEnabled(!draw_under);
+    for (unsigned i = 0; i < swatches_.size(); i++)
+      swatches_[i]->material_->setDepthWriteEnabled(!draw_under);
   }
 
   int group = draw_under ? Ogre::RENDER_QUEUE_4 : Ogre::RENDER_QUEUE_MAIN;
-  for (unsigned i = 0; i < swatches.size(); i++)
+  for (unsigned i = 0; i < swatches_.size(); i++)
   {
-    if (swatches[i]->manual_object_)
-      swatches[i]->manual_object_->setRenderQueueGroup(group);
+    if (swatches_[i]->manual_object_)
+      swatches_[i]->manual_object_->setRenderQueueGroup(group);
   }
 }
 
 void CSpace3DDisplay::updateYaw()
 {
   const int yaw = yaw_property_->getInt();
-  for (unsigned i = 0; i < swatches.size(); i++)
+  for (unsigned i = 0; i < swatches_.size(); i++)
   {
-    swatches[i]->updateData(yaw);
+    swatches_[i]->updateData(yaw);
   }
   Q_EMIT mapUpdated();
 }
@@ -537,15 +537,15 @@ void CSpace3DDisplay::clear()
     return;
   }
 
-  for (unsigned i = 0; i < swatches.size(); i++)
+  for (unsigned i = 0; i < swatches_.size(); i++)
   {
-    if (swatches[i]->manual_object_)
-      swatches[i]->manual_object_->setVisible(false);
+    if (swatches_[i]->manual_object_)
+      swatches_[i]->manual_object_->setVisible(false);
 
-    if (!swatches[i]->texture_.isNull())
+    if (!swatches_[i]->texture_.isNull())
     {
-      Ogre::TextureManager::getSingleton().remove(swatches[i]->texture_->getName());
-      swatches[i]->texture_.setNull();
+      Ogre::TextureManager::getSingleton().remove(swatches_[i]->texture_->getName());
+      swatches_[i]->texture_.setNull();
     }
   }
 
@@ -602,11 +602,11 @@ void CSpace3DDisplay::createSwatches()
   for (int i = 0; i < 4; i++)
   {
     ROS_INFO("Creating %d swatches", n_swatches);
-    for (unsigned i = 0; i < swatches.size(); i++)
+    for (unsigned i = 0; i < swatches_.size(); i++)
     {
-      delete swatches[i];
+      delete swatches_[i];
     }
-    swatches.clear();
+    swatches_.clear();
     try
     {
       int x = 0;
@@ -624,8 +624,8 @@ void CSpace3DDisplay::createSwatches()
         else
           th = height - y;
 
-        swatches.push_back(new Swatch(this, x, y, tw, th, resolution));
-        swatches[i]->updateData(0);
+        swatches_.push_back(new Swatch(this, x, y, tw, th, resolution));
+        swatches_[i]->updateData(0);
 
         x += tw;
         if (x >= width)
@@ -724,11 +724,11 @@ void CSpace3DDisplay::showMap()
   }
 
   const int yaw = yaw_property_->getInt();
-  for (size_t i = 0; i < swatches.size(); i++)
+  for (size_t i = 0; i < swatches_.size(); i++)
   {
-    swatches[i]->updateData(yaw);
+    swatches_[i]->updateData(yaw);
 
-    Ogre::Pass* pass = swatches[i]->material_->getTechnique(0)->getPass(0);
+    Ogre::Pass* pass = swatches_[i]->material_->getTechnique(0)->getPass(0);
     Ogre::TextureUnitState* tex_unit = nullptr;
     if (pass->getNumTextureUnitStates() > 0)
     {
@@ -739,9 +739,9 @@ void CSpace3DDisplay::showMap()
       tex_unit = pass->createTextureUnitState();
     }
 
-    tex_unit->setTextureName(swatches[i]->texture_->getName());
+    tex_unit->setTextureName(swatches_[i]->texture_->getName());
     tex_unit->setTextureFiltering(Ogre::TFO_NONE);
-    swatches[i]->manual_object_->setVisible(true);
+    swatches_[i]->manual_object_->setVisible(true);
   }
 
   if (!map_status_set)
@@ -766,9 +766,9 @@ void CSpace3DDisplay::updatePalette()
 {
   int palette_index = color_scheme_property_->getOptionInt();
 
-  for (unsigned i = 0; i < swatches.size(); i++)
+  for (unsigned i = 0; i < swatches_.size(); i++)
   {
-    Ogre::Pass* pass = swatches[i]->material_->getTechnique(0)->getPass(0);
+    Ogre::Pass* pass = swatches_[i]->material_->getTechnique(0)->getPass(0);
     Ogre::TextureUnitState* palette_tex_unit = nullptr;
     if (pass->getNumTextureUnitStates() > 1)
     {

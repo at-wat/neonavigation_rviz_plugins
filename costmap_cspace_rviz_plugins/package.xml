@@ -5,7 +5,6 @@
   <description>Rviz plugins for costmap_cspace_msgs</description>
   <maintainer email="atsushi.w@ieee.org">Atsushi Watanabe</maintainer>
   <license>BSD</license>
-  <license>Creative Commons</license>
   <author email="nhatao@seqsense.com">Naotaka Hatao</author>
 
   <buildtool_depend>catkin</buildtool_depend>

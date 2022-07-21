@@ -34,12 +34,14 @@ endif()
 
 add_definitions(-DQT_NO_KEYWORDS)
 
-set(SRC_FILES
+set(HEADER_FILES
   include/costmap_cspace_rviz_plugins/c_space_3d_display.h
+)
+set(SRC_FILES
   src/c_space_3d_display.cpp
 )
 
-add_library(${PROJECT_NAME} ${SRC_FILES})
+add_library(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES})
 

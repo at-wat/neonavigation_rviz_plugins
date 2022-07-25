@@ -2,6 +2,9 @@
 Changelog for package neonavigation_rviz_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.3.1 (2020-05-12)
 ------------------
 

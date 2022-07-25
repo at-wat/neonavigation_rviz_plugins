@@ -26,22 +26,26 @@ if(rviz_QT_VERSION VERSION_LESS "5")
   message(STATUS "Using Qt4 based on the rviz_QT_VERSION: ${rviz_QT_VERSION}")
   find_package(Qt4 ${rviz_QT_VERSION} EXACT REQUIRED QtCore QtGui)
   include(${QT_USE_FILE})
+
+  qt4_wrap_cpp(MOC_FILES
+    include/costmap_cspace_rviz_plugins/c_space_3d_display.h
+  )
 else()
   message(STATUS "Using Qt5 based on the rviz_QT_VERSION: ${rviz_QT_VERSION}")
   find_package(Qt5 ${rviz_QT_VERSION} EXACT REQUIRED Core Widgets)
   set(QT_LIBRARIES Qt5::Widgets)
+
+  qt5_wrap_cpp(MOC_FILES
+    include/costmap_cspace_rviz_plugins/c_space_3d_display.h
+  )
 endif()
 
 add_definitions(-DQT_NO_KEYWORDS)
 
-set(HEADER_FILES
-  include/costmap_cspace_rviz_plugins/c_space_3d_display.h
-)
-set(SRC_FILES
+add_library(${PROJECT_NAME}
   src/c_space_3d_display.cpp
+  ${MOC_FILES}
 )
-
-add_library(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES})
 

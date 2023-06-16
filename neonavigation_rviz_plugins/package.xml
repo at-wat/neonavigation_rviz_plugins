@@ -10,6 +10,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   
+  <exec_depend>costmap_cspace_rviz_plugins</exec_depend>
   <exec_depend>trajectory_tracker_rviz_plugins</exec_depend>
 
   <export>

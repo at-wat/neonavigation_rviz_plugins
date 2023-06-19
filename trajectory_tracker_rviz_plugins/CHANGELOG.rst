@@ -2,6 +2,9 @@
 Changelog for package trajectory_tracker_rviz_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.11.6 (2022-07-25)
 -------------------
 

@@ -2,8 +2,8 @@
 Changelog for package neonavigation_rviz_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.11.7 (2023-06-19)
+-------------------
 * neonavigation_rviz_plugins: add costmap_cspace_rviz_plugins as exec dependency (`#43 <https://github.com/at-wat/neonavigation_rviz_plugins/issues/43>`_)
 * Contributors: f-fl0
 

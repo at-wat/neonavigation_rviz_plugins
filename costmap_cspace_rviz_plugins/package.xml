@@ -11,7 +11,7 @@
 
   <depend>roscpp</depend>
   <depend>costmap_cspace_msgs</depend>
-  <depend>rviz</depend>
+  <depend version_gte="1.14.21">rviz</depend>
 
   <depend>libqt5-core</depend>
   <depend>libqt5-gui</depend>

@@ -17,7 +17,7 @@
   <exec_depend>libqt5-widgets</exec_depend>
 
   <depend>pluginlib</depend>
-  <depend>rviz</depend>
+  <depend version_gte="1.14.21">rviz</depend>
   <depend>trajectory_tracker_msgs</depend>
 
   <export>

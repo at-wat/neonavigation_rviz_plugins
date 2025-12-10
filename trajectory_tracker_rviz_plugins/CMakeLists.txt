@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.1...3.26)
 project(trajectory_tracker_rviz_plugins)
 
 set(CATKIN_DEPENDS
